@@ -1,0 +1,523 @@
+on init
+	message("")
+	make_perfview
+	set_ui_height_px(330)
+	set_control_par_str($INST_WALLPAPER_ID,$CONTROL_PAR_PICTURE,"Background")
+
+{--------------------------------------------eq--------------------------------------------------}
+
+	{controls for eq}
+	declare ui_slider $eqLowGain(0, 700000)
+	declare ui_slider $eqMidGain(0, 700000)
+	declare ui_slider $eqHiGain(0, 500000)
+	make_persistent($eqLowGain)
+	make_persistent($eqMidGain)
+	make_persistent($eqHiGain)
+
+	declare ui_label $eqHeaderLabel(1, 1)
+	declare ui_label $eqLowLabel(1, 1)
+	declare ui_label $eqMidLabel(1, 1)
+	declare ui_label $eqHiLabel(1, 1)
+	make_persistent($eqHeaderLabel)
+	make_persistent($eqLowLabel)
+	make_persistent($eqMidLabel)
+	make_persistent($eqHiLabel)
+
+	set_control_par_str(get_ui_id($eqLowGain), $CONTROL_PAR_PICTURE, "kalimba_knob")
+	set_control_par(get_ui_id($eqLowGain),$CONTROL_PAR_MOUSE_BEHAVIOUR, -400)
+	set_control_par_str(get_ui_id($eqMidGain), $CONTROL_PAR_PICTURE, "kalimba_knob")
+	set_control_par(get_ui_id($eqMidGain),$CONTROL_PAR_MOUSE_BEHAVIOUR, -400)
+	set_control_par_str(get_ui_id($eqHiGain), $CONTROL_PAR_PICTURE, "kalimba_knob")
+	set_control_par(get_ui_id($eqHiGain),$CONTROL_PAR_MOUSE_BEHAVIOUR, -400)
+
+	set_control_par_str(get_ui_id($eqHeaderLabel), $CONTROL_PAR_PICTURE, "Eq_Header")
+	set_text($eqHeaderLabel, "")
+	set_control_par_str(get_ui_id($eqLowLabel), $CONTROL_PAR_PICTURE, "Eq_Low")
+	set_text($eqLowLabel, "")
+	set_control_par_str(get_ui_id($eqMidLabel), $CONTROL_PAR_PICTURE, "Eq_Mid")
+	set_text($eqMidLabel, "")
+	set_control_par_str(get_ui_id($eqHiLabel), $CONTROL_PAR_PICTURE, "Eq_Hi")
+	set_text($eqHiLabel, "")
+	
+	move_control_px($eqHeaderLabel, 50, 25)
+	move_control_px($eqLowLabel,90, 70)
+	move_control_px($eqMidLabel,90, 120)
+	move_control_px($eqHiLabel,90, 170)
+	move_control_px($eqLowGain, 50, 75)
+	move_control_px($eqMidGain, 50, 125)
+	move_control_px($eqHiGain, 50, 175)
+
+	{initialize the eq}
+	$eqLowGain:=get_engine_par($ENGINE_PAR_GAIN1, -1, 0, 1)
+	set_engine_par($ENGINE_PAR_GAIN1, $eqLowGain, -1, 0, 1)
+	set_knob_defval($eqLowGain, 350000)
+
+	$eqMidGain:= get_engine_par($ENGINE_PAR_GAIN2, -1, 0, 1)
+	set_engine_par($ENGINE_PAR_GAIN2, $eqMidGain, -1, 0, 1)
+	set_knob_defval($eqMidGain, 350000)
+
+	$eqHiGain:=get_engine_par($ENGINE_PAR_GAIN3, -1, 0, 1)
+	set_engine_par($ENGINE_PAR_GAIN3, $eqHiGain, -1, 0, 1)
+	set_knob_defval($eqHiGain, 250000)
+
+{-----------------------------------------------------------------------------------------------}
+
+{------------------------------------compressor--------------------------------------------------}
+
+	{controls for compressor}
+	declare ui_button $compBypass
+	declare ui_menu $compMenu
+	declare ui_slider $compMix(0, 1000000)
+
+	make_persistent($compBypass)
+	make_persistent($compMenu)
+	make_persistent($compMix)
+
+	declare ui_label $compHeaderLabel(1, 1)
+	declare ui_label $compMixLabel(1, 1)
+
+	make_persistent($compHeaderLabel)
+	make_persistent($compMixLabel)
+
+	set_control_par_str(get_ui_id($compHeaderLabel), $CONTROL_PAR_PICTURE, "Comp_Header")
+	set_text($compHeaderLabel, "")
+	set_control_par_str(get_ui_id($compMixLabel), $CONTROL_PAR_PICTURE, "Mix")
+	set_text($compMixLabel, "")
+	set_control_par_str(get_ui_id($compBypass),$CONTROL_PAR_PICTURE,"button")
+	set_control_par_str(get_ui_id($compMenu), $CONTROL_PAR_PICTURE, "kalimba_menu")
+	set_control_par(get_ui_id($compMenu), $CONTROL_PAR_FONT_TYPE, 21)
+	set_control_par(get_ui_id($compMenu),$CONTROL_PAR_TEXT_ALIGNMENT,0)
+	set_control_par(get_ui_id($compMenu),$CONTROL_PAR_TEXTPOS_Y,3)
+
+	set_control_par_str(get_ui_id($compMix), $CONTROL_PAR_PICTURE, "kalimba_knob")
+	set_control_par(get_ui_id($compMix),$CONTROL_PAR_MOUSE_BEHAVIOUR, -400)
+	
+	move_control_px($compHeaderLabel, 200, 25)
+	move_control_px($compBypass, 255, 100)
+	move_control_px($compMix, 205, 75)
+	move_control_px($compMenu, 250, 75)
+	move_control_px($compMixLabel, 204, 110)
+
+	{initialize comp bypass button}
+	$compBypass:=get_engine_par($ENGINE_PAR_EFFECT_BYPASS, -1, 1, 1)
+	set_engine_par($ENGINE_PAR_EFFECT_BYPASS, $compBypass, -1, 1, 1)
+	set_text($compBypass, "")
+	
+	{initialize the compMix knob}
+	$compMix:=get_engine_par($ENGINE_PAR_SCOMP_MIX, -1, 1, 1)
+	set_engine_par($ENGINE_PAR_SCOMP_MIX, $compMix, -1, 1, 1)
+	set_knob_defval($compMix, 500000)
+
+	{fill the compressor menu}
+	declare const $compMenuLength:=3
+	declare !compMenuItems[$compMenuLength]
+	!compMenuItems[0] := "Transparent"
+	!compMenuItems[1] := "Punchy"
+	!compMenuItems[2] := "Hard Parallel"
+
+	add_menu_item($compMenu, !compMenuItems[0], 0)
+	add_menu_item($compMenu, !compMenuItems[1], 1)
+	add_menu_item($compMenu, !compMenuItems[2], 2)
+
+	{initialize the compressor}
+
+	declare $compThreshold
+	declare $compRatio
+	declare $compAttack
+	declare $compRelease
+	declare $compMakeup
+	
+	read_persistent_var($compMenu)
+
+	{don't set mix in this initilization, use the defval or persistence value}
+	select($compMenu)
+		case 0
+			$compThreshold:=420000
+			$compRatio:=200000
+			$compAttack:=600000
+			$compRelease:=600000
+			$compMakeup:=250000
+		case 1
+			$compThreshold:=340000
+			$compRatio:=500000
+			$compAttack:=800000
+			$compRelease:=400000
+			$compMakeup:=300000
+		case 2
+			$compThreshold:=270000
+			$compRatio:=1000000
+			$compAttack:=0
+			$compRelease:=200000
+			$compMakeup:=220000
+	end select
+
+
+	set_engine_par($ENGINE_PAR_SCOMP_THRESHOLD, $compThreshold, -1, 1, 1)
+	set_engine_par($ENGINE_PAR_SCOMP_RATIO, $compRatio, -1, 1, 1)
+	set_engine_par($ENGINE_PAR_SCOMP_ATTACK, $compAttack, -1, 1, 1)
+	set_engine_par($ENGINE_PAR_SCOMP_RELEASE, $compRelease, -1, 1, 1)
+	set_engine_par($ENGINE_PAR_SCOMP_MAKEUP, $compMakeup, -1, 1, 1)
+
+{-----------------------------------------------------------------------------------------------}
+
+{----------------------------------------resonance----------------------------------------------}
+
+	{controls for resonances}
+	declare ui_menu $resoMenu
+	declare $resoMin:=0
+	declare $resoMax:=700000
+	declare $resoOutputGain
+	declare ~resoPerc
+	declare $resoMute:=0
+	declare ui_slider $resoVol($resoMin, $resoMax)
+
+	make_persistent($resoMenu)
+	make_persistent($resoVol)
+
+	declare ui_label $resoHeaderLabel(1, 1)
+	declare ui_label $resoMixLabel(1, 1)
+	make_persistent($resoHeaderLabel)
+	make_persistent($resoMixLabel)
+
+	set_control_par_str(get_ui_id($resoHeaderLabel), $CONTROL_PAR_PICTURE, "Resonance_Header")
+	set_text($resoHeaderLabel, "")
+	set_control_par_str(get_ui_id($resoMixLabel), $CONTROL_PAR_PICTURE, "Mix")
+	set_text($resoMixLabel, "")
+	set_control_par_str(get_ui_id($resoVol), $CONTROL_PAR_PICTURE, "kalimba_knob")
+	set_control_par(get_ui_id($resoVol),$CONTROL_PAR_MOUSE_BEHAVIOUR, -300)
+	set_control_par_str(get_ui_id($resoMenu), $CONTROL_PAR_PICTURE, "kalimba_menu")
+	set_control_par(get_ui_id($resoMenu), $CONTROL_PAR_FONT_TYPE, 21)
+	set_control_par(get_ui_id($resoMenu),$CONTROL_PAR_TEXT_ALIGNMENT,0)
+	set_control_par(get_ui_id($resoMenu),$CONTROL_PAR_TEXTPOS_Y,3)
+
+	
+	move_control_px($resoHeaderLabel, 400, 25)
+	move_control_px($resoMixLabel, 400, 110)
+	move_control_px($resoVol, 400, 75)
+	move_control_px($resoMenu, 450, 75)
+
+	{fill the reso menu with items}
+	declare const $resoMenuLength:= 15
+	declare !resoMenuItems[$resoMenuLength]
+	!resoMenuItems[0] := "Kalimba"
+	!resoMenuItems[1] := "Kalimba Dream"
+	!resoMenuItems[2] := "Ukulele"
+	!resoMenuItems[3] := "Muffled"
+	!resoMenuItems[4] := "Spooky"
+	!resoMenuItems[5] := "Spooky Stutter"
+	!resoMenuItems[6] := "Glassy"
+	!resoMenuItems[7] := "Glassy Diffused"
+	!resoMenuItems[8] := "Glassy Short"
+	!resoMenuItems[9] := "Glassy Diffused Short"
+	!resoMenuItems[10] := "Box 1"
+	!resoMenuItems[11] := "Box 2"
+	!resoMenuItems[12] := "Crash"
+	!resoMenuItems[13] := "Dirty Crash"
+	!resoMenuItems[14] := "Desk"
+
+	declare !resoNames[$resoMenuLength]
+	!resoNames[0] := "Kalimba_Reso.wav"
+	!resoNames[1] := "Kalimba_Dream_Reso.wav"
+	!resoNames[2] := "Ukulele_Reso.wav"
+	!resoNames[3] := "Explosion_Reso.wav"
+	!resoNames[4] := "Spooky_Reso.wav"
+	!resoNames[5] := "Spooky_Stutter_Reso.wav"
+	!resoNames[6] := "Glassy_Reso.wav"
+	!resoNames[7] := "Glassy_diffused_Reso.wav"
+	!resoNames[8] := "Glassy_short_Reso.wav"
+	!resoNames[9] := "Glassy_Diffused_short_Reso.wav"
+	!resoNames[10] := "Box_1_Reso.wav"
+	!resoNames[11] := "Box_2_Reso.wav"
+	!resoNames[12] := "Crash_Reso_210127.wav"
+	!resoNames[13] := "Dirty_Crash_Reso_210127.wav"
+	!resoNames[14] := "Desk_Reso_210128.wav"
+
+	{variables and items for the resonance menu}
+	declare $resoMenuCounter:=0
+	while($resoMenuCounter < $resoMenuLength)
+		add_menu_item($resoMenu, !resoMenuItems[$resoMenuCounter], $resoMenuCounter)
+		inc($resoMenuCounter)
+	end while
+	$resoMenuCounter:=0
+	
+	{load resonance from file}
+	read_persistent_var($resoMenu)
+	load_ir_sample(!resoNames[$resoMenu], 3, 1)
+	
+	{initialize the reso volume knob}
+	$resoVol:=get_engine_par($ENGINE_PAR_INSERT_EFFECT_OUTPUT_GAIN,-1, 3, 1)
+	set_engine_par($ENGINE_PAR_INSERT_EFFECT_OUTPUT_GAIN, $resoVol, -1, 3, 1)
+	if($resoVol > 350000)
+		set_engine_par($ENGINE_PAR_SEND_EFFECT_DRY_LEVEL, 2 * (700000 - $resoVol), -1, 3, 1)
+	else
+		set_engine_par($ENGINE_PAR_SEND_EFFECT_DRY_LEVEL, 700000, -1, 3, 1)
+	end if
+	set_knob_defval($resoVol, 350000)
+	
+	{$resoOutputGain:=get_engine_par($ENGINE_PAR_SEND_EFFECT_OUTPUT_GAIN, -1, 0, 0)
+	~resoPerc:= (int_to_real($resoOutputGain) / int_to_real($resoMax)) * 100.0}
+	{set_engine_par($ENGINE_PAR_SEND_EFFECT_OUTPUT_GAIN, $resoVol, -1, 0, 0)}
+
+{----------------------------------------------------------------------------------------------}
+
+{----------------------------------------release----------------------------------------------}
+
+	{controls for release trigger}
+	declare ui_slider $releaseVol(120000, 1150000)
+	make_persistent($releaseVol)
+
+	declare ui_label $releaseHeaderLabel(1, 1)
+	declare ui_label $releaseVolLabel(1, 1)
+	
+	make_persistent($releaseHeaderLabel)
+	make_persistent($releaseVolLabel)
+
+	set_control_par_str(get_ui_id($releaseVol), $CONTROL_PAR_PICTURE, "kalimba_slider")
+	set_control_par(get_ui_id($releaseVol),$CONTROL_PAR_MOUSE_BEHAVIOUR, -200)
+
+	set_control_par(get_ui_id($releaseVolLabel), $CONTROL_PAR_FONT_TYPE, 21)
+
+	set_control_par_str(get_ui_id($releaseHeaderLabel), $CONTROL_PAR_PICTURE, "Release_Header")
+	set_text($releaseHeaderLabel, "")
+
+	hide_part($releaseVolLabel, $HIDE_PART_BG)
+
+	move_control_px($releaseHeaderLabel, 275, 175)
+	move_control_px($releaseVol, 400, 190)
+	move_control_px($releaseVolLabel, 550, 190)
+
+	{initialize the release volume knob}
+	set_knob_defval($releaseVol, 630000)
+	$releaseVol:=get_engine_par($ENGINE_PAR_VOLUME, -1, -1, $NI_BUS_OFFSET+1)
+	if($releaseVol < 270000)
+		set_engine_par($ENGINE_PAR_VOLUME, 0, -1, -1, $NI_BUS_OFFSET+1)
+		set_text($releaseVolLabel, "OFF")
+	else
+		set_engine_par($ENGINE_PAR_VOLUME, $releaseVol, -1, -1, $NI_BUS_OFFSET+1)
+		set_text($releaseVolLabel, get_engine_par_disp($ENGINE_PAR_VOLUME, -1, -1, $NI_BUS_OFFSET+1) & " dB")
+	end if
+	
+{----------------------------------------------------------------------------------------------}
+
+{----------------------------------------thumb-------------------------------------------------}
+
+	{controls for thumb trigger}
+	declare ui_slider $thumbVol(120000, 1150000)
+	make_persistent($thumbVol)
+
+	declare ui_label $thumbHeaderLabel(1, 1)
+	declare ui_label $thumbVolLabel(1, 1)
+	
+	make_persistent($thumbHeaderLabel)
+	make_persistent($thumbVolLabel)
+
+	set_control_par_str(get_ui_id($thumbVol), $CONTROL_PAR_PICTURE, "kalimba_slider")
+	set_control_par(get_ui_id($thumbVol),$CONTROL_PAR_MOUSE_BEHAVIOUR, -200)
+
+	set_control_par_str(get_ui_id($thumbHeaderLabel), $CONTROL_PAR_PICTURE, "Thumb_Header")
+	set_text($thumbHeaderLabel, "")
+
+	set_control_par(get_ui_id($thumbVolLabel), $CONTROL_PAR_FONT_TYPE, 21)
+	hide_part($thumbVolLabel, $HIDE_PART_BG)
+
+	move_control_px($thumbHeaderLabel, 275, 215)
+	move_control_px($thumbVol, 400, 230)
+	move_control_px($thumbVolLabel, 550, 230)
+	
+	{declare $thumbMute:=0}
+
+	{initialize the thumb volume knob, WARNING ON LINE TWO BELOW}
+	set_knob_defval($thumbVol, 630000)
+	$thumbVol:=get_engine_par($ENGINE_PAR_VOLUME, -1, -1, $NI_BUS_OFFSET+2)
+	if($thumbVol < 270000)
+		set_text($thumbVolLabel, "OFF")
+		set_engine_par($ENGINE_PAR_VOLUME, 0, -1, -1, $NI_BUS_OFFSET+2)
+	else 
+		set_text($thumbVolLabel, get_engine_par_disp($ENGINE_PAR_VOLUME, -1, -1, $NI_BUS_OFFSET+2) & " dB")
+		set_engine_par($ENGINE_PAR_VOLUME, $thumbVol, -1, -1, $NI_BUS_OFFSET+2)
+	end if
+	
+{-----------------------------------------------------------------------------------------------}
+
+{----------------------------------------dynamic------------------------------------------------}
+
+	{maybe implement at some point}
+
+	{declare ui_label $dynamicHeaderLabel(1, 1)
+	declare ui_slider $dynamicPerc(250000, 800000)
+	make_persistent($dynamicPerc)
+	make_persistent($dynamicHeaderLabel)
+
+	set_control_par_str(get_ui_id($dynamicHeaderLabel), $CONTROL_PAR_PICTURE, "Thumb_Header")
+	set_text($dynamicHeaderLabel, "")
+	set_control_par_str(get_ui_id($dynamicPerc), $CONTROL_PAR_PICTURE, "kalimba_slider")
+	set_control_par(get_ui_id($dynamicPerc),$CONTROL_PAR_MOUSE_BEHAVIOUR, -200)
+
+	move_control_px($dynamicHeaderLabel, 275, 255)
+	move_control_px($dynamicPerc, 400, 270)
+
+	set_knob_defval($dynamicPerc, 625000)
+	$dynamicPerc:=get_engine_par()}
+
+
+{-----------------------------------------------------------------------------------------------}
+
+{-----------------------------------logic-------------------------------------------------------}
+
+	{logic and variables for notes}
+	declare $rrNote:=0
+	declare $randomRelease:=4
+	declare $randomThumb:=8
+	declare %noteLength[128]
+	declare %sampleLength[128]
+	declare ~relVelPerc
+	declare ~relNewVel
+	{variable for determining pedal position. 0->up, 1-> down}
+	declare $pedal_down:=0
+	
+	{logic for release triggers, note down = 1, note not down = 0}
+	declare %midiKeyDown[128]
+	declare $i_controller
+	declare $i_init:= 0
+	while($i_init < 128)
+		%midiKeyDown[$i_init]:=0
+		inc($i_init)
+	end while
+end on
+
+{----------------------------------init end------------------------------------------------------}
+
+on ui_control ($eqLowGain)
+	set_engine_par($ENGINE_PAR_GAIN1, $eqLowGain, -1, 0, 1)
+end on
+
+on ui_control ($eqMidGain)
+	set_engine_par($ENGINE_PAR_GAIN2, $eqMidGain, -1, 0, 1)
+end on
+	
+on ui_control ($eqHiGain)
+	set_engine_par($ENGINE_PAR_GAIN3, $eqHiGain, -1, 0, 1)
+end on
+
+on ui_control ($compMenu)
+	message("ui_control $compMenu")
+	{update bypass status of compressor}
+	$compBypass:=0
+	set_engine_par($ENGINE_PAR_EFFECT_BYPASS, $compBypass, -1, 1, 1)	
+	
+	select($compMenu)
+		case 0
+			$compThreshold:=420000
+			$compRatio:=200000
+			$compAttack:=600000
+			$compRelease:=600000
+			$compMakeup:=250000
+			$compMix:=500000
+		case 1
+			$compThreshold:=340000
+			$compRatio:=500000
+			$compAttack:=800000
+			$compRelease:=400000
+			$compMakeup:=300000
+			$compMix:=1000000
+		case 2
+			$compThreshold:=270000
+			$compRatio:=1000000
+			$compAttack:=0
+			$compRelease:=200000
+			$compMakeup:=220000
+			$compMix:=200000
+	end select
+		set_engine_par($ENGINE_PAR_SCOMP_MIX, $compMix, -1, 1, 1)
+		set_engine_par($ENGINE_PAR_SCOMP_THRESHOLD, $compThreshold, -1, 1, 1)
+		set_engine_par($ENGINE_PAR_SCOMP_RATIO, $compRatio, -1, 1, 1)
+		set_engine_par($ENGINE_PAR_SCOMP_ATTACK, $compAttack, -1, 1, 1)
+		set_engine_par($ENGINE_PAR_SCOMP_RELEASE, $compRelease, -1, 1, 1)
+		set_engine_par($ENGINE_PAR_SCOMP_MAKEUP, $compMakeup, -1, 1, 1)
+end on
+
+on ui_control ($compBypass)
+	set_engine_par($ENGINE_PAR_EFFECT_BYPASS, $compBypass, -1, 1, 1)
+end on
+
+on ui_control ($compMix)
+	set_engine_par($ENGINE_PAR_SCOMP_MIX, $compMix, -1, 1, 1)
+end on
+
+on ui_control ($resoMenu)
+	load_ir_sample(!resoNames[$resoMenu], 3, 1)
+end on
+
+on ui_control ($resoVol)
+	set_engine_par($ENGINE_PAR_SEND_EFFECT_OUTPUT_GAIN, $resoVol, -1, 3, 1)
+	if($resoVol > 350000)
+		set_engine_par($ENGINE_PAR_SEND_EFFECT_DRY_LEVEL, 2 * (700000 - $resoVol), -1, 3, 1)
+	else
+		set_engine_par($ENGINE_PAR_SEND_EFFECT_DRY_LEVEL, 700000, -1, 3, 1)
+	end if
+end on
+
+on ui_control($releaseVol)
+	if($releaseVol < 270000)
+		set_engine_par($ENGINE_PAR_VOLUME, 0, -1, -1, $NI_BUS_OFFSET+1)
+		set_text($releaseVolLabel, "OFF")
+	else
+		set_engine_par($ENGINE_PAR_VOLUME, $releaseVol, -1, -1, $NI_BUS_OFFSET+1)
+		set_text($releaseVolLabel, get_engine_par_disp($ENGINE_PAR_VOLUME, -1, -1, $NI_BUS_OFFSET+1) & " dB")
+	end if
+end on
+
+on ui_control($thumbVol)
+	if($thumbVol < 270000)
+		set_text($thumbVolLabel, "OFF")
+		set_engine_par($ENGINE_PAR_VOLUME, 0, -1, -1, $NI_BUS_OFFSET+2)
+	else 
+		set_text($thumbVolLabel, get_engine_par_disp($ENGINE_PAR_VOLUME, -1, -1, $NI_BUS_OFFSET+2) & " dB")
+		set_engine_par($ENGINE_PAR_VOLUME, $thumbVol, -1, -1, $NI_BUS_OFFSET+2)
+	end if
+end on
+
+on note
+	disallow_group($ALL_GROUPS)
+	{allow main group for rr sample, allow thumb group for rr sample
+	thumb sample interferes with release Volume determination, hence
+	the random thumb triggers implemented after wait(1)}
+	allow_group($rrNote)
+	wait(1)
+	%sampleLength[$EVENT_NOTE]:=get_sample_length(get_event_par($EVENT_ID, $EVENT_PAR_ZONE_ID))
+	allow_group($randomThumb)
+	play_note($EVENT_NOTE, $EVENT_VELOCITY, 0, -1)
+	$randomThumb:=random(8, 10)
+	%midiKeyDown[$EVENT_NOTE]:= 1
+	inc($rrNote)
+	$rrNote:=$rrNote mod 4
+end on
+
+on release
+	if(%midiKeyDown[$EVENT_NOTE] = 1 and $pedal_down = 0)
+		disallow_group($ALL_GROUPS)
+		{allow random release sample}
+		allow_group($randomRelease)
+		
+		{determine release velocity}
+		%noteLength[$EVENT_NOTE]:=%NOTE_DURATION[$EVENT_NOTE]
+		~relVelPerc:= 1.0 - int_to_real(%noteLength[$EVENT_NOTE]) / int_to_real(%sampleLength[$EVENT_NOTE])
+		if(~relVelPerc <= 1.0 and ~relVelPerc >= 0.0)
+			~relVelPerc:= pow(~relVelPerc,4.0)
+			~relNewVel := int_to_real($EVENT_VELOCITY) * ~relVelPerc
+			{play release note and update key info}
+			play_note($EVENT_NOTE, real_to_int(~relNewVel), 0, 0)
+		end if
+		$randomRelease:=random(4, 7)
+		%midiKeyDown[$EVENT_NOTE]:=0
+	end if
+end on
+
+on controller
+	if($CC_NUM = 64 and %CC[$CC_NUM] = 0)
+		$pedal_down := 0
+	end if
+	if(%CC[$CC_NUM] > 0)
+		$pedal_down:=1
+	end if
+end on
